@@ -7,43 +7,46 @@ function _classCallCheck(instance, Constructor) {
 }
 
 var TextScramble=function () {
-    function TextScramble(el) {
-        _classCallCheck(this, TextScramble);
+    class TextScramble {
+        constructor(el) {
+            _classCallCheck(this, TextScramble);
 
-        this.el=el;
-        this.chars='!<>-_\\/[]{}—=+*^?#________';
-        this.update=this.update.bind(this);
+            this.el = el;
+            this.chars = '!<>-_\\/[]{}—=+*^?#________';
+            this.update = this.update.bind(this);
+        }
+        setText(newText) {
+            var _this = this;
+
+            var oldText = this.el.innerText;
+            var length = Math.max(oldText.length, newText.length);
+
+            var promise = new Promise(function (resolve) {
+                return _this.resolve = resolve;
+            });
+            this.queue = [];
+
+            for (var i = 0; i < length; i++) {
+                var from = oldText[i] || '';
+                var to = newText[i] || '';
+                var start = Math.floor(Math.random() * 40);
+                var end = start + Math.floor(Math.random() * 40);
+
+                this.queue.push({
+                    from: from, to: to, start: start, end: end
+                });
+            }
+
+            cancelAnimationFrame(this.frameRequest);
+            this.frame = 0;
+            this.update();
+            return promise;
+        }
+        randomChar() {
+            return this.chars[Math.floor(Math.random() * this.chars.length)];
+        }
     }
 
-    TextScramble.prototype.setText=function setText(newText) {
-        var _this=this;
-
-        var oldText=this.el.innerText;
-        var length=Math.max(oldText.length, newText.length);
-
-        var promise=new Promise(function (resolve) {
-                return _this.resolve=resolve;
-            });
-        this.queue=[];
-
-        for (var i=0; i < length; i++) {
-            var from=oldText[i] || '';
-            var to=newText[i] || '';
-            var start=Math.floor(Math.random() * 40);
-            var end=start+Math.floor(Math.random() * 40);
-
-            this.queue.push({
-                from: from, to: to, start: start, end: end
-            });
-    }
-
-    cancelAnimationFrame(this.frameRequest);
-    this.frame=0;
-    this.update();
-    return promise;
-}
-
-;
 
 TextScramble.prototype.update=function update() {
     var output='';
@@ -90,14 +93,9 @@ TextScramble.prototype.update=function update() {
 
 ;
 
-TextScramble.prototype.randomChar=function randomChar() {
-    return this.chars[Math.floor(Math.random() * this.chars.length)];
-}
-
-;
 
 return TextScramble;
-}
+}();
 
 var phrases=['fiWe',
 'Welcome to my GitHub page'];
