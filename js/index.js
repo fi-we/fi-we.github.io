@@ -1,5 +1,3 @@
-'use strict';
-
 function _classCallCheck(instance, Constructor) {
     if ( !(instance instanceof Constructor)) {
         throw new TypeError("Cannot call a class as a function");
@@ -48,53 +46,50 @@ var TextScramble=function () {
     }
 
 
-TextScramble.prototype.update=function update() {
-    var output='';
-    var complete=0;
+    TextScramble.prototype.update=function update() {
+        var output='';
+        var complete=0;
 
-    for (var i=0, n=this.queue.length; i < n; i++) {
-        var _queue$i =this.queue[i];
-        var from=_queue$i.from;
-        var to=_queue$i.to;
-        var start=_queue$i.start;
-        var end=_queue$i.end;
-        var char=_queue$i.char;
+        for (var i=0, n=this.queue.length; i < n; i++) {
+            var _queue$i =this.queue[i];
+            var from=_queue$i.from;
+            var to=_queue$i.to;
+            var start=_queue$i.start;
+            var end=_queue$i.end;
+            var char=_queue$i.char;
 
-        if (this.frame >=end) {
-            complete++;
-            output+=to;
-        }
-
-        else if (this.frame >=start) {
-            if ( !char || Math.random() < 0.28) {
-                char=this.randomChar();
-                this.queue[i].char=char;
+            if (this.frame >=end) {
+                complete++;
+                output+=to;
             }
 
-            output+='<span class="dud">'+char+'</span>';
+            else if (this.frame >=start) {
+                if ( !char || Math.random() < 0.28) {
+                    char=this.randomChar();
+                    this.queue[i].char=char;
+                }
+
+                output+='<span class="dud">'+char+'</span>';
+            }
+
+            else {
+                output+=from;
+            }
+        }
+
+        this.el.innerHTML=output;
+
+        if (complete===this.queue.length) {
+            this.resolve();
         }
 
         else {
-            output+=from;
+            this.frameRequest=requestAnimationFrame(this.update);
+            this.frame++;
         }
-    }
-
-    this.el.innerHTML=output;
-
-    if (complete===this.queue.length) {
-        this.resolve();
-    }
-
-    else {
-        this.frameRequest=requestAnimationFrame(this.update);
-        this.frame++;
-    }
-}
-
-;
-
-
-return TextScramble;
+    }; 
+    
+    return TextScramble;
 }();
 
 var phrases=['fiWe',
