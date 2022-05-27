@@ -1,10 +1,10 @@
 function _classCallCheck(instance, Constructor) {
-    if ( !(instance instanceof Constructor)) {
+    if (!(instance instanceof Constructor)) {
         throw new TypeError("Cannot call a class as a function");
     }
 }
 
-var TextScramble=function () {
+const TextScramble = function() {
     class TextScramble {
         constructor(el) {
             _classCallCheck(this, TextScramble);
@@ -13,26 +13,25 @@ var TextScramble=function () {
             this.chars = '!<>-_\\/[]{}—=+*^?#________';
             this.update = this.update.bind(this);
         }
+
         setText(newText) {
-            var _this = this;
+            let _this = this,
+                oldText = this.el.innerText,
+                length = Math.max(oldText.length, newText.length);
 
-            var oldText = this.el.innerText;
-            var length = Math.max(oldText.length, newText.length);
-
-            var promise = new Promise(function (resolve) {
+            let promise = new Promise(function (resolve) {
                 return _this.resolve = resolve;
             });
+
             this.queue = [];
 
-            for (var i = 0; i < length; i++) {
-                var from = oldText[i] || '';
-                var to = newText[i] || '';
-                var start = Math.floor(Math.random() * 40);
-                var end = start + Math.floor(Math.random() * 40);
+            for(let i = 0; i < length; i++) {
+                let from = oldText[i] || '',
+                    to = newText[i] || '',
+                    start = Math.floor(Math.random() * 40),
+                    end = start + Math.floor(Math.random() * 40);
 
-                this.queue.push({
-                    from: from, to: to, start: start, end: end
-                });
+                this.queue.push({from, to, start, end});
             }
 
             cancelAnimationFrame(this.frameRequest);
@@ -40,49 +39,40 @@ var TextScramble=function () {
             this.update();
             return promise;
         }
+
         randomChar() {
             return this.chars[Math.floor(Math.random() * this.chars.length)];
         }
     }
 
 
-    TextScramble.prototype.update=function update() {
-        var output='';
-        var complete=0;
+    TextScramble.prototype.update = function update() {
+        let output = '', complete = 0;
 
-        for (var i=0, n=this.queue.length; i < n; i++) {
-            var _queue$i =this.queue[i];
-            var from=_queue$i.from;
-            var to=_queue$i.to;
-            var start=_queue$i.start;
-            var end=_queue$i.end;
-            var char=_queue$i.char;
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+            let _queue$i = this.queue[i],
+                from = _queue$i.from,
+                to = _queue$i.to,
+                start = _queue$i.start,
+                end = _queue$i.end,
+                char = _queue$i.char;
 
-            if (this.frame >=end) {
+            if (this.frame >= end) {
                 complete++;
-                output+=to;
-            }
-
-            else if (this.frame >=start) {
-                if ( !char || Math.random() < 0.28) {
-                    char=this.randomChar();
-                    this.queue[i].char=char;
+                output += to;
+            } else if(this.frame >= start) {
+                if (!char || Math.random() < 0.28) {
+                    char = this.randomChar();
+                    this.queue[i].char = char;
                 }
 
-                output+='<span class="dud">'+char+'</span>';
-            }
-
-            else {
-                output+=from;
-            }
+                output += '<span class="dud">' + char + '</span>';
+            } else output += from;
         }
 
-        this.el.innerHTML=output;
+        this.el.innerHTML = output;
 
-        if (complete===this.queue.length) {
-            this.resolve();
-        }
-
+        if (complete === this.queue.length) this.resolve();
         else {
             this.frameRequest=requestAnimationFrame(this.update);
             this.frame++;
@@ -92,19 +82,15 @@ var TextScramble=function () {
     return TextScramble;
 }();
 
-var phrases=['fiWe',
-'Welcome to my GitHub page'];
+let phrases = ['fiWe', 'Welcome to my GitHub page'],
+    el = document.querySelector('.text'),
+    fx = new TextScramble(el),
+    counter = 0;
 
-var el=document.querySelector('.text');
-var fx=new TextScramble(el);
+const next = () => {
+    fx.setText(phrases[counter]).then(() => setTimeout(next, 3000));
 
-var counter=0;
-
-var next=function next() {
-    fx.setText(phrases[counter]).then(function () {
-            setTimeout(next, 3000);
-        });
-    counter=(counter + 1) % phrases.length;
+    counter = (counter + 1) % phrases.length;
 };
 
 next();
